@@ -1,26 +1,5 @@
-# truncateZero
+import truncateZero from '../src';
 
-This function will remove the ending zero numbers and add suffixes: k(thousand), m(million), b(billion), t(trillion). _Note_: all decimal numbers will be removed.
-
-# Install & Usage
-
-To run install, use:
-
-```bash
-npm run install truncate-zero --save # or yarn add truncate-zero
-```
-
-To use:
-
-```bash
-import truncateZero from 'truncate-zero';
-
-truncateZero(1000); // 1k
-```
-
-# Examples
-
-```
 it('hundred', () => {
   expect(truncateZero(0.2)).toEqual('0');
   expect(truncateZero(100)).toEqual('100');
@@ -64,4 +43,3 @@ it('provide different suffix options', () => {
     '1abc'
   );
 });
-```
