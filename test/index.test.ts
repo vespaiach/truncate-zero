@@ -36,7 +36,10 @@ it('over trillion', () => {
   expect(truncateZero(1000000000000000)).toEqual('1000t');
 });
 
-it('give options', () => {
+it('provide different suffix options', () => {
   expect(truncateZero(1000, { suffixes: ['a', 'b'] })).toEqual('1a');
   expect(truncateZero(1000000, { suffixes: ['a', ' b'] })).toEqual('1 b');
+  expect(truncateZero(1000000000, { suffixes: ['a', ' b', 'abc'] })).toEqual(
+    '1abc'
+  );
 });
