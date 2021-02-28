@@ -39,11 +39,11 @@
   "size-limit": [
     {
       "path": "dist/truncate-zero.cjs.production.min.js",
-      "limit": "10 KB"
+      "limit": "2 KB"
     },
     {
       "path": "dist/truncate-zero.esm.js",
-      "limit": "10 KB"
+      "limit": "2 KB"
     }
   ],
   "devDependencies": {

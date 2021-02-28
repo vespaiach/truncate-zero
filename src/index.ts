@@ -1,48 +1,64 @@
 /**
- * Default rounding function.
+ * Remove tail zero.
  */
-function _round(num: number) {
-  return parseInt(num.toFixed(0));
+function remove(s: string) {
+  let i = s.length;
+  for (; i--; i >= 0) {
+    if (s[i] !== '0') {
+      break;
+    }
+  }
+  if (s[i] === '.') {
+    i -= 1;
+  }
+
+  return s.substring(0, i + 1);
 }
 
 /**
- * Format a number as short string by truncating ending zeros: 1k, 2.2k, -45.1m...
+ * Make number as short string by truncating ending zero characters and add suffixes: 1k, 2.2k, -45.1m...
  * @param num Number to be formatted
  * @param options (optional) input suffixes: k, m, b, t and the rounding function
  */
 export default function truncateZero(
-  num: number,
+  input: number,
   options?: {
-    thousand?: string;
-    million?: string;
-    billion?: string;
-    trillion?: string;
-    round?: (n: number) => number;
+    suffixes?: string[];
   }
 ): string {
-  const absNum = Math.abs(num);
   const opts = Object.assign(
     {},
     {
-      thousand: 'k',
-      million: 'm',
-      billion: 'b',
-      trillion: 't',
-      round: _round,
+      suffixes: ['k', 'm', 'b', 't'],
     },
     options || {}
   );
-  const { round = _round, thousand, million, billion, trillion } = opts;
 
-  if (absNum <= 999) {
-    return String(round(num));
-  } else if (absNum <= 999999) {
-    return `${round(num) / 1000}${thousand}`;
-  } else if (absNum <= 999999999) {
-    return `${round(num) / 1000000}${million}`;
-  } else if (absNum <= 999999999999) {
-    return `${round(num) / 1000000000}${billion}`;
+  const { suffixes } = opts;
+  const num = Math.trunc(input);
+  const sign = Math.sign(num);
+  const strNum = String(Math.abs(num));
+  const len = strNum.length;
+
+  let pointPos = len % 3 === 0 ? Math.floor(len / 3) - 1 : Math.floor(len / 3);
+
+  if (pointPos > suffixes.length) {
+    pointPos = suffixes.length;
+  }
+
+  if (pointPos <= 0) {
+    return String(num);
   } else {
-    return `${round(num) / 1000000000000}${trillion}`;
+    const suffix = suffixes[pointPos - 1];
+
+    return (
+      (sign < 0 ? '-' : '') +
+      remove(
+        `${strNum.substring(0, len - pointPos * 3)}.${strNum.substring(
+          len - pointPos * 3
+        )}`
+      ) +
+      suffix
+    );
   }
 }

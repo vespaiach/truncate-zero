@@ -1,42 +1,48 @@
 /**
- * Default rounding function.
+ * Remove tail zero.
  */
-function _round(num) {
-  return parseInt(num.toFixed(0));
+function remove(s) {
+  var i = s.length;
+
+  for (; i--; i >= 0) {
+    if (s[i] !== '0') {
+      break;
+    }
+  }
+
+  if (s[i] === '.') {
+    i -= 1;
+  }
+
+  return s.substring(0, i + 1);
 }
 /**
- * Format a number as short string by truncating ending zeros: 1k, 2.2k, -45.1m...
+ * Make number as short string by truncating ending zero characters and add suffixes: 1k, 2.2k, -45.1m...
  * @param num Number to be formatted
  * @param options (optional) input suffixes: k, m, b, t and the rounding function
  */
 
 
-function truncateZero(num, options) {
-  var absNum = Math.abs(num);
+function truncateZero(input, options) {
   var opts = Object.assign({}, {
-    thousand: 'k',
-    million: 'm',
-    billion: 'b',
-    trillion: 't',
-    round: _round
+    suffixes: ['k', 'm', 'b', 't']
   }, options || {});
-  var _opts$round = opts.round,
-      round = _opts$round === void 0 ? _round : _opts$round,
-      thousand = opts.thousand,
-      million = opts.million,
-      billion = opts.billion,
-      trillion = opts.trillion;
+  var suffixes = opts.suffixes;
+  var num = Math.trunc(input);
+  var sign = Math.sign(num);
+  var strNum = String(Math.abs(num));
+  var len = strNum.length;
+  var pointPos = len % 3 === 0 ? Math.floor(len / 3) - 1 : Math.floor(len / 3);
 
-  if (absNum <= 999) {
-    return String(round(num));
-  } else if (absNum <= 999999) {
-    return "" + round(num) / 1000 + thousand;
-  } else if (absNum <= 999999999) {
-    return "" + round(num) / 1000000 + million;
-  } else if (absNum <= 999999999999) {
-    return "" + round(num) / 1000000000 + billion;
+  if (pointPos > suffixes.length) {
+    pointPos = suffixes.length;
+  }
+
+  if (pointPos <= 0) {
+    return String(num);
   } else {
-    return "" + round(num) / 1000000000000 + trillion;
+    var suffix = suffixes[pointPos - 1];
+    return (sign < 0 ? '-' : '') + remove(strNum.substring(0, len - pointPos * 3) + "." + strNum.substring(len - pointPos * 3)) + suffix;
   }
 }
 
